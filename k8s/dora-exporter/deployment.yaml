@@ -18,8 +18,8 @@ spec:
       serviceAccountName: dora-exporter
       containers:
         - name: dora-exporter
-          image: 2184mk-cell/devboard-dora-exporter:latest
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/2184mk-cell/devboard-dora-exporter:latest
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8080
