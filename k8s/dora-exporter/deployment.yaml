@@ -24,12 +24,12 @@ spec:
             - name: http
               containerPort: 8080
           env:
-            - name: APP
-              value: devboard
             - name: ARGOCD_URL
               value: http://argocd-server.argocd.svc.cluster.local
             - name: ARGOCD_APP
               value: devboard
+            - name: GITHUB_REPO
+              value: 2184mk-cell/devboard-dora-sota
             - name: POLL_SECONDS
               value: "30"
             - name: DB_PATH
@@ -63,4 +63,5 @@ spec:
               memory: 256Mi
       volumes:
         - name: data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: dora-exporter-data
