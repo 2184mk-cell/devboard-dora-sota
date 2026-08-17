@@ -1,0 +1,28 @@
+# SAST via SonarCloud (https://sonarcloud.io — free for public repos).
+# Requires: secret SONAR_TOKEN (a SonarCloud token), secret SONAR_HOST_URL set
+# to https://sonarcloud.io, and sonar.organization/projectKey in
+# sonar-project.properties matching your SonarCloud project.
+
+name: Sonar Scan
+
+on:
+    workflow_call:
+
+jobs:
+    sonar-scanner:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Code Checkout
+              uses: actions/checkout@v7
+              with:
+                # Full history so SonarCloud can attribute new code correctly.
+                fetch-depth: 0
+
+            - name: SonarCloud Scan
+              # Non-blocking for now: reports but doesn't gate the pipeline
+              # (remove once SonarCloud is fully configured).
+              continue-on-error: true
+              uses: SonarSource/sonarqube-scan-action@v8.2.0
+              env:
+                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
