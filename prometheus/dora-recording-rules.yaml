@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: devboard-dora-recording-rules
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: devboard-dora-recordings
+      interval: 1m
+      rules:
+        - record: devboard:dora:deployment_frequency_7d
+          expr: sum(increase(devboard_deployments_total{application="devboard",status="success"}[7d])) / 7
+        - record: devboard:dora:change_failure_rate_30d
+          expr: sum(increase(devboard_deployments_total{application="devboard",status="failure"}[30d])) / clamp_min(sum(increase(devboard_deployments_total{application="devboard"}[30d])), 1)
+        - record: devboard:dora:lead_time_p50_30d
+          expr: histogram_quantile(0.50, sum by (le) (rate(devboard_deployment_lead_time_seconds_bucket{application="devboard"}[30d])))
+        - record: devboard:dora:recovery_time_p50_30d
+          expr: histogram_quantile(0.50, sum by (le) (rate(devboard_deployment_recovery_seconds_bucket{application="devboard"}[30d])))

@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dora-exporter
+  namespace: dora-observability
+  labels:
+    app: dora-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dora-exporter
+  template:
+    metadata:
+      labels:
+        app: dora-exporter
+    spec:
+      serviceAccountName: dora-exporter
+      containers:
+        - name: dora-exporter
+          image: ghcr.io/2184mk-cell/devboard-dora-exporter:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: ARGOCD_URL
+              value: http://argocd-server.argocd.svc.cluster.local
+            - name: ARGOCD_APP
+              value: devboard
+            - name: GITHUB_REPO
+              value: 2184mk-cell/devboard
+            - name: POLL_SECONDS
+              value: "30"
+            - name: DB_PATH
+              value: /data/dora.db
+            - name: ARGOCD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: dora-exporter-argocd
+                  key: token
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: dora-exporter-data

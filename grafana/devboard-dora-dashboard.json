@@ -1,0 +1,16 @@
+{
+  "title": "DevBoard - DORA",
+  "uid": "devboard-dora",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "panels": [
+    {"type":"stat","title":"Deployment Frequency (7d)","gridPos":{"x":0,"y":0,"w":6,"h":4},"targets":[{"expr":"devboard:dora:deployment_frequency_7d"}]},
+    {"type":"stat","title":"Change Failure Rate (30d)","gridPos":{"x":6,"y":0,"w":6,"h":4},"fieldConfig":{"defaults":{"unit":"percentunit"}},"targets":[{"expr":"devboard:dora:change_failure_rate_30d"}]},
+    {"type":"stat","title":"Lead Time P50 (30d)","gridPos":{"x":12,"y":0,"w":6,"h":4},"fieldConfig":{"defaults":{"unit":"s"}},"targets":[{"expr":"devboard:dora:lead_time_p50_30d"}]},
+    {"type":"stat","title":"Recovery Time P50 (30d)","gridPos":{"x":18,"y":0,"w":6,"h":4},"fieldConfig":{"defaults":{"unit":"s"}},"targets":[{"expr":"devboard:dora:recovery_time_p50_30d"}]},
+    {"type":"timeseries","title":"Successful vs Failed Deployments","gridPos":{"x":0,"y":4,"w":12,"h":8},"targets":[{"expr":"sum(rate(devboard_deployments_total{status=\"success\"}[1h]))","legendFormat":"success"},{"expr":"sum(rate(devboard_deployments_total{status=\"failure\"}[1h]))","legendFormat":"failure"}]},
+    {"type":"timeseries","title":"Argo CD Sync Status","gridPos":{"x":12,"y":4,"w":12,"h":8},"targets":[{"expr":"devboard_argocd_sync_status{application=\"devboard\"}","legendFormat":"{{status}}"}]},
+    {"type":"timeseries","title":"Argo CD Health Status","gridPos":{"x":0,"y":12,"w":12,"h":8},"targets":[{"expr":"devboard_argocd_health_status{application=\"devboard\"}","legendFormat":"{{status}}"}]},
+    {"type":"table","title":"Current Revision","gridPos":{"x":12,"y":12,"w":12,"h":8},"targets":[{"expr":"devboard_observed_revision_timestamp{application=\"devboard\"}","format":"table"}]}
+  ]
+}

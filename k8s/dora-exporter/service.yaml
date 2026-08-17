@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dora-exporter
+  namespace: dora-observability
+  labels:
+    app: dora-exporter
+spec:
+  selector:
+    app: dora-exporter
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: dora-exporter
+  namespace: dora-observability
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: dora-exporter
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s

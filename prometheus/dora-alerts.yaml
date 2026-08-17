@@ -1,0 +1,44 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: devboard-dora-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: devboard-dora-alerts
+      rules:
+        - alert: DevBoardDORAHighChangeFailureRate
+          expr: devboard:dora:change_failure_rate_30d > 0.15
+          for: 15m
+          labels:
+            severity: warning
+            service: devboard
+          annotations:
+            summary: DevBoard change failure rate is above 15%
+            description: The rolling 30-day failed deployment ratio is {{ $value | humanizePercentage }}.
+        - alert: DevBoardDORALongLeadTime
+          expr: devboard:dora:lead_time_p50_30d > 3600
+          for: 30m
+          labels:
+            severity: warning
+            service: devboard
+          annotations:
+            summary: DevBoard median change lead time exceeds 1 hour
+        - alert: DevBoardDORALongRecoveryTime
+          expr: devboard:dora:recovery_time_p50_30d > 3600
+          for: 30m
+          labels:
+            severity: warning
+            service: devboard
+          annotations:
+            summary: DevBoard median recovery time exceeds 1 hour
+        - alert: DevBoardDORANoSuccessfulDeployments
+          expr: increase(devboard_deployments_total{application="devboard",status="success"}[7d]) == 0
+          for: 30m
+          labels:
+            severity: warning
+            service: devboard
+          annotations:
+            summary: No successful DevBoard deployment observed in 7 days
