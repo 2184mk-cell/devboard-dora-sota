@@ -1,0 +1,16 @@
+{
+  "title": "DevBoard - SOTA Engineering Scorecard",
+  "uid": "devboard-sota",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "panels": [
+    {"type":"stat","title":"Overall Engineering Score","gridPos":{"x":0,"y":0,"w":6,"h":5},"targets":[{"expr":"100 * (0.30 * clamp_max(clamp_min(1 - devboard:dora:change_failure_rate_30d,0),1) + 0.20 * devboard_argocd_health_status{application=\"devboard\",status=\"Healthy\"} + 0.15 * devboard_argocd_sync_status{application=\"devboard\",status=\"Synced\"} + 0.15 + 0.10 + 0.10)"}]},
+    {"type":"stat","title":"Reliability / Health","gridPos":{"x":6,"y":0,"w":6,"h":5},"targets":[{"expr":"100 * devboard_argocd_health_status{application=\"devboard\",status=\"Healthy\"}"}]},
+    {"type":"stat","title":"GitOps / Sync","gridPos":{"x":12,"y":0,"w":6,"h":5},"targets":[{"expr":"100 * devboard_argocd_sync_status{application=\"devboard\",status=\"Synced\"}"}]},
+    {"type":"stat","title":"Delivery Quality","gridPos":{"x":18,"y":0,"w":6,"h":5},"fieldConfig":{"defaults":{"unit":"percentunit"}},"targets":[{"expr":"1 - devboard:dora:change_failure_rate_30d"}]},
+    {"type":"timeseries","title":"Argo CD Health","gridPos":{"x":0,"y":5,"w":12,"h":8},"targets":[{"expr":"devboard_argocd_health_status{application=\"devboard\"}","legendFormat":"{{status}}"}]},
+    {"type":"timeseries","title":"DORA Change Failure Rate","gridPos":{"x":12,"y":5,"w":12,"h":8},"targets":[{"expr":"devboard:dora:change_failure_rate_30d","legendFormat":"CFR"}]},
+    {"type":"timeseries","title":"DORA Lead Time P50","gridPos":{"x":0,"y":13,"w":12,"h":8},"targets":[{"expr":"devboard:dora:lead_time_p50_30d","legendFormat":"lead time"}]},
+    {"type":"timeseries","title":"DORA Recovery Time P50","gridPos":{"x":12,"y":13,"w":12,"h":8},"targets":[{"expr":"devboard:dora:recovery_time_p50_30d","legendFormat":"recovery"}]}
+  ]
+}
